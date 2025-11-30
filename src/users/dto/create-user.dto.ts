@@ -1,14 +1,4 @@
-import {
-  IsString,
-  IsNotEmpty,
-  MinLength,
-  MaxLength,
-  Validate,
-  ValidationArguments,
-  ValidatorConstraint,
-  ValidatorConstraintInterface,
-} from 'class-validator';
-
+import { IsString, IsNotEmpty, MinLength, MaxLength } from 'class-validator';
 
 export class CreateUserDto {
   @IsString()
@@ -19,7 +9,7 @@ export class CreateUserDto {
 
   @IsString()
   @IsNotEmpty({ message: 'Password is required' })
-  @MinLength(5, { message: 'Password must be at least 5 characters long'})
+  @MinLength(5, { message: 'Password must be at least 5 characters long' })
   @MaxLength(10, { message: 'Password must be at most 10 characters long' })
   password: string;
 }

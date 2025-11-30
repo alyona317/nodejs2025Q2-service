@@ -26,7 +26,7 @@ export class DifferentPasswordsConstraint
     return 'New password must be different from old password';
   }
 }
-export class CreateUserDto {
+export class UpdatePasswordDto {
   @IsString()
   @IsNotEmpty({ message: 'Login is required' })
   @MinLength(3, { message: 'Login must be at least 3 characters long' })
@@ -40,4 +40,3 @@ export class CreateUserDto {
   @Validate(DifferentPasswordsConstraint)
   newPassword: string;
 }
-
