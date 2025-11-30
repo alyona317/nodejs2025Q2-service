@@ -62,5 +62,4 @@ export class ArtistsService {
       return album;
     });
   }
-  
 }
