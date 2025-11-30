@@ -1,72 +1,90 @@
-# Home Library Service
+❗️ Please don't forget to copy .env.example to .env with port 4000, if there's no 'env'. 
+❗️ Please don't forget to run server (npm run start:dev) before running tests (npm run test)
 
-## Prerequisites
+Instruction
+1. Install dependencies: npm ci
+2.	Create .env file (copy from .env.example): cp .env.example .env
+3. npm run start:dev
+4. npm run test
+5. Open postman or analog and check localhost
 
-- Git - [Download & Install Git](https://git-scm.com/downloads).
-- Node.js - [Download & Install Node.js](https://nodejs.org/en/download/) and the npm package manager.
+User API Testing
 
-## Downloading
+Create User
+POST http://localhost:4000/user
+json
+{"login": "alice", "password": "alice123"}
 
-```
-git clone {repository URL}
-```
+Get All Users
+GET http://localhost:4000/user
 
-## Installing NPM modules
+Get User by ID
+GET http://localhost:4000/user/:id
 
-```
-npm install
-```
+Update Password
+PUT http://localhost:4000/user/:id
+json
+{"oldPassword": "alice123", "newPassword": "newalice"}
+Delete User
 
-## Running application
+DELETE http://localhost:4000/user/:id
 
-```
-npm start
-```
+Track API Testing
 
-After starting the app on port (4000 as default) you can open
-in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
-For more information about OpenAPI/Swagger please visit https://swagger.io/.
+Create Track
+POST http://localhost:4000/track
+json
+{"name": "Song 1", "artistId": null, "albumId": null, "duration": 180}
 
-## Testing
+Get Track
+GET http://localhost:4000/track/:id
 
-After application running open new terminal and enter:
+Update Track
+PUT http://localhost:4000/track/:id
+json
+{"name": "Song 1 updated", "duration": 200}
+Delete Track
 
-To run all tests without authorization
+DELETE http://localhost:4000/track/:id
 
-```
-npm run test
-```
+Artist API Testing
 
-To run only one of all test suites
+Create Artist
+POST http://localhost:4000/artist
+json
+{"name": "Rammstein", "grammy": false}
 
-```
-npm run test -- <path to suite>
-```
+Get All Artists
+GET http://localhost:4000/artist
 
-To run all test with authorization
+Get Artist by ID
+GET http://localhost:4000/artist/:id
 
-```
-npm run test:auth
-```
+Update Artist
+PUT http://localhost:4000/artist/:id
+json
+{"name": "Rammstein Band", "grammy": true}
 
-To run only specific test suite with authorization
+Delete Artist
+DELETE http://localhost:4000/artist/:id
 
-```
-npm run test:auth -- <path to suite>
-```
+Album API Testing
 
-### Auto-fix and format
+Create Album
+POST http://localhost:4000/album
+json
+{"name": "Mutter", "year": 2001, "artistId": "uuid"}
 
-```
-npm run lint
-```
+Get All Albums
+GET http://localhost:4000/album
 
-```
-npm run format
-```
+Get Album by ID
+GET http://localhost:4000/album/:id
 
-### Debugging in VSCode
+Update Album
+PUT http://localhost:4000/album/:id
+json
+{"name": "New Album Name", "year": 2002, "artistId": null}
+Delete Album
 
-Press <kbd>F5</kbd> to debug.
-
-For more information, visit: https://code.visualstudio.com/docs/editor/debugging
+DELETE http://localhost:4000/album/:id
