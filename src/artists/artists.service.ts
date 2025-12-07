@@ -8,22 +8,31 @@ import { Artist } from './entities/artist.entity';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { Album } from 'src/albums/entities/album.entity';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class ArtistsService {
-  private artists: Artist[] = [];
-  private albums: Album[] = [];
+  constructor(
+    @InjectRepository(Artist)
+    private artistsRepository: Repository<Artist>,
+  ) {}
 
-  findAll(): Artist[] {
-    return this.artists;
+  async findAll(): Promise<Artist[]> {
+    return this.artistsRepository.find(); // 
   }
 
-  findOne(id: string): Artist {
+  async findOne(id: string): Promise<Artist> {
+
     if (!isUUID(id)) {
       throw new BadRequestException('Invalid artist id');
     }
 
-    const artist = this.artists.find((a) => a.id === id);
+    const artist = await this.artistsRepository.findOne({
+
+      where: { id },
+    });
+
     if (!artist) {
       throw new NotFoundException(`Artist with id ${id} not found`);
     }
@@ -31,35 +40,24 @@ export class ArtistsService {
     return artist;
   }
 
-  create(dto: CreateArtistDto): Artist {
-    const newArtist: Artist = {
-      id: uuidv4(),
-      ...dto,
-    };
+  async create(dto: CreateArtistDto): Promise<Artist> {
 
-    this.artists.push(newArtist);
-    return newArtist;
+    const newArtist = this.artistsRepository.create(dto);
+    return this.artistsRepository.save(newArtist);
   }
 
-  update(id: string, dto: UpdateArtistDto): Artist {
-    const artist = this.findOne(id);
+  async update(id: string, dto: UpdateArtistDto): Promise<Artist> {
 
-    const updatedArtist = { ...artist, ...dto };
-    this.artists = this.artists.map((a) => (a.id === id ? updatedArtist : a));
+    const artist = await this.findOne(id); // 
+    if (dto.name !== undefined) artist.name = dto.name;
+    if (dto.grammy !== undefined) artist.grammy = dto.grammy;
 
-    return updatedArtist;
+    return this.artistsRepository.save(artist);
   }
 
-  delete(id: string): void {
-    this.findOne(id);
+  async delete(id: string): Promise<void> {
+    const artist = await this.findOne(id); // 
+    await this.artistsRepository.delete(id); // 
 
-    this.artists = this.artists.filter((a) => a.id !== id);
-
-    this.albums = this.albums.map((album) => {
-      if (album.artistId === id) {
-        return { ...album, artistId: null };
-      }
-      return album;
-    });
   }
 }
