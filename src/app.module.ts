@@ -22,7 +22,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         port: configService.get('POSTGRES_PORT', 5432),
         username: configService.get('POSTGRES_USER', 'postgres'),
         password: configService.get('POSTGRES_PASSWORD', 'postgres'),
-        database: configService.get('POSTGRES_DATABASE', 'postgres_db'),
+        database: configService.get('POSTGRES_DB', 'postgres_db'),
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
         synchronize:
           configService.get('POSTGRES_SYNCHRONIZE') === 'true' ||

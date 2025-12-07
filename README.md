@@ -1,12 +1,8 @@
-❗️ Please don't forget to copy .env.example to .env with port 4000, if there's no 'env'. 
-❗️ Please don't forget to run server (npm run start:dev) before running tests (npm run test)
-
 Instruction
 1. Install dependencies: npm ci
 2.	Create .env file (copy from .env.example): cp .env.example .env
-3. npm run start:dev
-4. npm run test
-5. Open postman or analog and check localhost
+3. docker compose up --build
+4. Open postman or analog and check localhost
 
 User API Testing
 
