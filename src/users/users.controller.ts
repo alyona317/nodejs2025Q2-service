@@ -20,14 +20,14 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
   @Get()
   @HttpCode(HttpStatus.OK)
-  getAll() {
-    const users = this.usersService.findAll();
+  async getAll() {
+    const users = await this.usersService.findAll();
     return this.usersService.sanitizeList(users);
   }
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  getOne(@Param('id', new ParseUUIDPipe()) id: string) {
-    const user = this.usersService.findOne(id);
+  async getOne(@Param('id', new ParseUUIDPipe()) id: string) {
+    const user = await this.usersService.findOne(id);
     if (!user) {
       throw new NotFoundException(`User with id ${id} not found`);
     }
@@ -35,25 +35,25 @@ export class UsersController {
   }
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  createUser(@Body() dto: CreateUserDto) {
-    const newUser = this.usersService.create(dto);
+  async createUser(@Body() dto: CreateUserDto) {
+    const newUser = await this.usersService.create(dto);
     return this.usersService.removePassword(newUser);
   }
 
   @Put(':id')
   @HttpCode(HttpStatus.OK)
-  updatePassword(
+  async updatePassword(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() dto: UpdatePasswordDto,
   ) {
-    const updated = this.usersService.updatePassword(id, dto);
+    const updated = await this.usersService.updatePassword(id, dto);
     return this.usersService.removePassword(updated);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  deleteUser(@Param('id', new ParseUUIDPipe()) id: string) {
-    const deleted = this.usersService.delete(id);
+  async deleteUser(@Param('id', new ParseUUIDPipe()) id: string) {
+    const deleted = await this.usersService.delete(id);
     if (!deleted) {
       throw new NotFoundException(`User with id ${id} not found`);
     }

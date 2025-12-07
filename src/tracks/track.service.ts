@@ -3,56 +3,129 @@ import {
   NotFoundException,
   BadRequestException,
 } from '@nestjs/common';
-import { v4 as uuidv4, validate as isUUID } from 'uuid';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { Track } from './entities/track.entity';
+import { Artist } from '../artists/entities/artist.entity';
+import { Album } from '../albums/entities/album.entity';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
+import { validate as isUUID } from 'uuid';
 
 @Injectable()
 export class TracksService {
-  private tracks: Track[] = [];
+  constructor(
+    @InjectRepository(Track)
+    private tracksRepository: Repository<Track>,
 
-  findAll(): Track[] {
-    return this.tracks;
+    @InjectRepository(Artist)
+    private artistsRepository: Repository<Artist>,
+
+    @InjectRepository(Album)
+    private albumsRepository: Repository<Album>,
+  ) {}
+
+  async findAll(): Promise<Track[]> {
+    return this.tracksRepository.find({
+      relations: ['artist', 'album'],
+    });
   }
 
-  findOne(id: string): Track {
-    if (!isUUID(id)) throw new BadRequestException('Invalid track id');
-    const track = this.tracks.find((track) => track.id === id);
-    if (!track) {
-      throw new NotFoundException(`track with id ${id} not found`);
+  async findOne(id: string): Promise<Track> {
+    if (!isUUID(id)) {
+      throw new BadRequestException('Invalid track id');
     }
+
+    const track = await this.tracksRepository.findOne({
+      where: { id },
+      relations: ['artist', 'album'],
+    });
+
+    if (!track) {
+      throw new NotFoundException(`Track with id ${id} not found`);
+    }
+
     return track;
   }
 
-  create(dto: CreateTrackDto): Track {
-    const newTrack: Track = {
-      id: uuidv4(),
+  async create(dto: CreateTrackDto): Promise<Track> {
+    let artist = null;
+    if (dto.artistId) {
+      artist = await this.artistsRepository.findOne({
+        where: { id: dto.artistId },
+      });
+      if (!artist) {
+        throw new BadRequestException(
+          `Artist with id ${dto.artistId} not found`,
+        );
+      }
+    }
+
+    let album = null;
+    if (dto.albumId) {
+      album = await this.albumsRepository.findOne({
+        where: { id: dto.albumId },
+      });
+      if (!album) {
+        throw new BadRequestException(`Album with id ${dto.albumId} not found`);
+      }
+    }
+
+    const track = this.tracksRepository.create({
       name: dto.name,
+      duration: dto.duration,
       artistId: dto.artistId || null,
       albumId: dto.albumId || null,
-      duration: dto.duration,
-    };
-    this.tracks.push(newTrack);
-    return newTrack;
+      artist: artist,
+      album: album,
+    });
+
+    return this.tracksRepository.save(track);
   }
-  updateTrack(id: string, dto: UpdateTrackDto): Track {
-    const track = this.tracks.find((track) => track.id === id);
-    if (!track) {
-      throw new NotFoundException(`track with id ${id} not found`);
+
+  async updateTrack(id: string, dto: UpdateTrackDto): Promise<Track> {
+    const track = await this.findOne(id);
+
+    if (dto.name !== undefined) track.name = dto.name;
+    if (dto.duration !== undefined) track.duration = dto.duration;
+
+    if (dto.artistId !== undefined) {
+      let artist = null;
+      if (dto.artistId) {
+        artist = await this.artistsRepository.findOne({
+          where: { id: dto.artistId },
+        });
+        if (!artist) {
+          throw new BadRequestException(
+            `Artist with id ${dto.artistId} not found`,
+          );
+        }
+      }
+      track.artistId = dto.artistId || null;
+      track.artist = artist;
     }
-    track.name = dto.name ?? track.name;
-    track.albumId = dto.albumId ?? track.albumId;
-    track.artistId = dto.artistId ?? track.artistId;
-    track.duration = dto.duration ?? track.duration;
-    return track;
+
+    if (dto.albumId !== undefined) {
+      let album = null;
+      if (dto.albumId) {
+        album = await this.albumsRepository.findOne({
+          where: { id: dto.albumId },
+        });
+        if (!album) {
+          throw new BadRequestException(
+            `Album with id ${dto.albumId} not found`,
+          );
+        }
+      }
+      track.albumId = dto.albumId || null;
+      track.album = album;
+    }
+
+    return this.tracksRepository.save(track);
   }
 
-  remove(id: string): boolean {
-    const track = this.tracks.find((t) => t.id === id);
-    if (!track) return false;
-
-    this.tracks = this.tracks.filter((t) => t.id !== id);
-    return true;
+  async remove(id: string): Promise<boolean> {
+    const result = await this.tracksRepository.delete(id);
+    return result.affected > 0;
   }
 }

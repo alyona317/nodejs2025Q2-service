@@ -16,34 +16,37 @@ import { UpdateTrackDto } from './dto/update-track.dto';
 
 @Controller('track')
 export class TracksController {
-  constructor(private readonly TracksService: TracksService) {}
+  constructor(private readonly tracksService: TracksService) {}
+
   @Get()
-  getAll() {
-    return this.TracksService.findAll();
+  async getAll() {
+    return await this.tracksService.findAll();
   }
+
   @Get(':id')
-  getOne(@Param('id') id: string) {
-    const track = this.TracksService.findOne(id);
+  async getOne(@Param('id') id: string) {
+    const track = await this.tracksService.findOne(id);
     if (!track) {
-      throw new NotFoundException(`track with id ${id} not found`);
+      throw new NotFoundException(`Track with id ${id} not found`);
     }
     return track;
   }
+
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  createUser(@Body() dto: CreateTrackDto) {
-    return this.TracksService.create(dto);
+  async createTrack(@Body() dto: CreateTrackDto) {
+    return await this.tracksService.create(dto);
   }
 
   @Put(':id')
-  updatePassword(@Param('id') id: string, @Body() dto: UpdateTrackDto) {
-    return this.TracksService.updateTrack(id, dto);
+  async updateTrack(@Param('id') id: string, @Body() dto: UpdateTrackDto) {
+    return await this.tracksService.updateTrack(id, dto);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  deleteUser(@Param('id') id: string) {
-    const deleted = this.TracksService.remove(id);
+  async deleteTrack(@Param('id') id: string) {
+    const deleted = await this.tracksService.remove(id);
     if (!deleted) {
       throw new NotFoundException(`Track with id ${id} not found`);
     }
