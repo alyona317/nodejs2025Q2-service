@@ -1,72 +1,86 @@
-# Home Library Service
+Instruction
+1. Install dependencies: npm ci
+2.	Create .env file (copy from .env.example): cp .env.example .env
+3. docker compose up --build
+4. Open postman or analog and check localhost
 
-## Prerequisites
+User API Testing
 
-- Git - [Download & Install Git](https://git-scm.com/downloads).
-- Node.js - [Download & Install Node.js](https://nodejs.org/en/download/) and the npm package manager.
+Create User
+POST http://localhost:4000/user
+json
+{"login": "alice", "password": "alice123"}
 
-## Downloading
+Get All Users
+GET http://localhost:4000/user
 
-```
-git clone {repository URL}
-```
+Get User by ID
+GET http://localhost:4000/user/:id
 
-## Installing NPM modules
+Update Password
+PUT http://localhost:4000/user/:id
+json
+{"oldPassword": "alice123", "newPassword": "newalice"}
+Delete User
 
-```
-npm install
-```
+DELETE http://localhost:4000/user/:id
 
-## Running application
+Track API Testing
 
-```
-npm start
-```
+Create Track
+POST http://localhost:4000/track
+json
+{"name": "Song 1", "artistId": null, "albumId": null, "duration": 180}
 
-After starting the app on port (4000 as default) you can open
-in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
-For more information about OpenAPI/Swagger please visit https://swagger.io/.
+Get Track
+GET http://localhost:4000/track/:id
 
-## Testing
+Update Track
+PUT http://localhost:4000/track/:id
+json
+{"name": "Song 1 updated", "duration": 200}
+Delete Track
 
-After application running open new terminal and enter:
+DELETE http://localhost:4000/track/:id
 
-To run all tests without authorization
+Artist API Testing
 
-```
-npm run test
-```
+Create Artist
+POST http://localhost:4000/artist
+json
+{"name": "Rammstein", "grammy": false}
 
-To run only one of all test suites
+Get All Artists
+GET http://localhost:4000/artist
 
-```
-npm run test -- <path to suite>
-```
+Get Artist by ID
+GET http://localhost:4000/artist/:id
 
-To run all test with authorization
+Update Artist
+PUT http://localhost:4000/artist/:id
+json
+{"name": "Rammstein Band", "grammy": true}
 
-```
-npm run test:auth
-```
+Delete Artist
+DELETE http://localhost:4000/artist/:id
 
-To run only specific test suite with authorization
+Album API Testing
 
-```
-npm run test:auth -- <path to suite>
-```
+Create Album
+POST http://localhost:4000/album
+json
+{"name": "Mutter", "year": 2001, "artistId": "uuid"}
 
-### Auto-fix and format
+Get All Albums
+GET http://localhost:4000/album
 
-```
-npm run lint
-```
+Get Album by ID
+GET http://localhost:4000/album/:id
 
-```
-npm run format
-```
+Update Album
+PUT http://localhost:4000/album/:id
+json
+{"name": "New Album Name", "year": 2002, "artistId": null}
+Delete Album
 
-### Debugging in VSCode
-
-Press <kbd>F5</kbd> to debug.
-
-For more information, visit: https://code.visualstudio.com/docs/editor/debugging
+DELETE http://localhost:4000/album/:id
