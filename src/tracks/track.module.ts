@@ -7,9 +7,7 @@ import { Artist } from '../artists/entities/artist.entity';
 import { Album } from '../albums/entities/album.entity';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Track, Artist, Album]), 
-  ],
+  imports: [TypeOrmModule.forFeature([Track, Artist, Album])],
   controllers: [TracksController],
   providers: [TracksService],
   exports: [TracksService],

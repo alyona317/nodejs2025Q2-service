@@ -97,9 +97,21 @@ export class AlbumsService {
   }
 
   async remove(id: string): Promise<void> {
-    const result = await this.albumsRepository.delete(id);
-    if (result.affected === 0) {
+    if (!this.isValidUUID(id)) {
+      throw new BadRequestException('Invalid UUID format');
+    }
+
+    const album = await this.albumsRepository.findOne({ where: { id } });
+    if (!album) {
       throw new NotFoundException(`Album with id ${id} not found`);
     }
+
+    await this.albumsRepository.delete(id);
+  }
+
+  private isValidUUID(uuid: string): boolean {
+    const uuidRegex =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    return uuidRegex.test(uuid);
   }
 }

@@ -3,13 +3,12 @@ import {
   NotFoundException,
   ForbiddenException,
 } from '@nestjs/common';
-import { v4 as uuidv4 } from 'uuid';
+// import { v4 as uuidv4 } from 'uuid';
 import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-
 
 @Injectable()
 export class UsersService {
@@ -33,18 +32,18 @@ export class UsersService {
 
   async updatePassword(id: string, dto: UpdatePasswordDto): Promise<User> {
     const user = await this.usersRepository.findOne({ where: { id } });
-    
+
     if (!user) {
       throw new NotFoundException(`User with id ${id} not found`);
     }
-    
+
     if (user.password !== dto.oldPassword) {
       throw new ForbiddenException('Old password is incorrect');
     }
-    
+
     user.password = dto.newPassword;
     user.version += 1;
-    
+
     return this.usersRepository.save(user);
   }
 
